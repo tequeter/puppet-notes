@@ -12,9 +12,8 @@ Puppetlabs's infrastructure. Beyond that, stuff tends to break.
 
 ## Useful docs
 
-[Quickstart](https://github.com/puppetlabs/beaker/blob/master/docs/tutorials/quick_start_rake_tasks.md)
-to generate sample files to work with and run a first test (Puppet can be
-installed). Remember that, if you are using PDK, you should include the
+[Quickstart] to generate sample files to work with and run a first test (Puppet
+can be installed). Remember that, if you are using PDK, you should include the
 Rakefile change in your `.sync.yml` instead:
 
 ```yaml
@@ -24,16 +23,22 @@ Rakefile:
     - beaker/tasks/quick_start
 ```
 
-[The Beaker DSL](https://github.com/puppetlabs/beaker/blob/master/docs/how_to/the_beaker_dsl.md).
-The most useful bit in the docs, probably. Err, scrape that: most of the links
-are obsolete :(
+[The Beaker DSL], as a list of useful functions. Some/most of links are broken
+because of the [4.0 release] which moved most of these methods to [separate
+modules], most importantly [beaker-puppet].
 
-[Beaker::TestCase](https://www.rubydoc.info/github/puppetlabs/beaker/Beaker/TestCase).
-Your tests and pre/post/whatever suites extend that class, so all the
-methods and properties listed there are available immediately.
+[Beaker::TestCase]. Your tests and pre/post/whatever suites extend that class,
+so all the methods and properties listed there are available immediately.
 
 There are much more docs on the beaker repo, but so far RTFSing has been more
 useful in my endeavors.
+
+[Quickstart]: https://github.com/puppetlabs/beaker/blob/master/docs/tutorials/quick_start_rake_tasks.md
+[The Beaker DSL]: https://github.com/puppetlabs/beaker/blob/master/docs/how_to/the_beaker_dsl.md
+[4.0 release]: https://github.com/puppetlabs/beaker/blob/4.0.0/docs/how_to/upgrade_from_3_to_4.md
+[separate modules]: https://www.rubydoc.info/find/github?q=beaker
+[beaker-puppet]: https://www.rubydoc.info/github/puppetlabs/beaker-puppet
+[Beaker::TestCase]: https://www.rubydoc.info/github/puppetlabs/beaker/Beaker/TestCase
 
 
 ## Directory layout
