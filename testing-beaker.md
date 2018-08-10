@@ -12,6 +12,8 @@ Puppetlabs's infrastructure. Beyond that, stuff tends to break.
 
 ## Useful docs
 
+### Introductory / concepts
+
 [Quickstart] to generate sample files to work with and run a first test
 (install Puppet and try to run it). Remember that, if you are using PDK, you
 should include the Rakefile change in your `.sync.yml` instead:
@@ -23,12 +25,11 @@ Rakefile:
     - beaker/tasks/quick_start
 ```
 
+What a [test should look like]. I wish this had been easier to find...
+
 [The Beaker DSL], as a list of useful functions. Some/most of links are broken
 because of the [4.0 release] which moved most of these methods to [separate
 modules], most importantly [beaker-puppet].
-
-[Beaker::TestCase]. Your tests and pre/post/whatever suites extend that class,
-so all the methods and properties listed there are available immediately.
 
 [Style Guide], some useful tips in there.
 
@@ -40,8 +41,29 @@ useful in my endeavors.
 [4.0 release]: https://github.com/puppetlabs/beaker/blob/4.0.0/docs/how_to/upgrade_from_3_to_4.md
 [separate modules]: https://www.rubydoc.info/find/github?q=beaker
 [beaker-puppet]: https://www.rubydoc.info/github/puppetlabs/beaker-puppet
-[Beaker::TestCase]: https://www.rubydoc.info/github/puppetlabs/beaker/Beaker/TestCase
 [Style Guide]: https://github.com/puppetlabs/beaker/blob/master/docs/concepts/style_guide.md
+[test should look like]: https://www.rubydoc.info/github/puppetlabs/beaker/Beaker/DSL/Structure
+
+### API
+
+[Beaker::TestCase]. Your tests and pre/post/whatever suites extend that class,
+so all the methods and properties listed there are available immediately.
+
+There are much more useful methods in the [Beaker::DSL] and the classes in that
+namespace (don't miss them). And then there are all the [beaker-puppet] DSL
+extensions, just as important as the main gem for our purposes.
+
+[Unix::Host], that `host` object, even for Windows SUTs. NB: it also
+has properties you can lookup, but I haven't found a reference for these.
+
+When actually testing stuff, you'll want to assert the results with [Minitest],
+Ruby's syntax for test suites.
+
+[Beaker::TestCase]: https://www.rubydoc.info/github/puppetlabs/beaker/Beaker/TestCase
+[Beaker::DSL]: https://www.rubydoc.info/github/puppetlabs/beaker/Beaker/DSL
+[beaker-puppet]: https://www.rubydoc.info/github/puppetlabs/beaker-puppet/
+[Unix::Host]: https://www.rubydoc.info/github/puppetlabs/beaker/Unix/Host
+[Minitest]: http://docs.seattlerb.org/minitest/Minitest/Assertions.html
 
 
 ## Directory layout
