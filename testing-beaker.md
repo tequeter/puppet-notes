@@ -2,6 +2,13 @@
 
 (Or myself next week.)
 
+## Glossary
+
+- __DSL__ (Domain-Specific Language): a computer language tailored for specific
+  needs. Here, Ruby extensions for testing configuration management systems.
+- __SUT__ (System Under Test): the disposable VM or container you are running your
+  tests on.
+
 ## My setup
 
 Linux, PDK 1.6.1, Vagrant, VirtualBox.
