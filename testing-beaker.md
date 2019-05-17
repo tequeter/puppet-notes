@@ -9,6 +9,12 @@
 - __SUT__ (System Under Test): the disposable VM or container you are running your
   tests on.
 
+## This is not about Beaker-RSpec
+
+Don't bother with what follows if Beaker-RSpec can fit the bill for you: you
+don't need to reboot your SUTs mid-test, and you don't need more than one SUT
+at once.
+
 ## My setup
 
 Linux, PDK 1.6.1, Vagrant, VirtualBox.
