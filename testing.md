@@ -101,34 +101,7 @@ The tests being run by Travis CI, the entry point of these examples is in
 `.travis.yml`, along with the environment variables that are part of the
 configuration.
 
-See also
-[my example without Travis CI](https://github.com/tequeter/puppet-logcheck/commit/cfdc7db86b989c2153031383ac808519d61c3467).
-
-#### Using Beaker-RSpec with PDK
-
-If you are using PDK (and you should), adjust the install steps like this:
-
-Add this to your `.sync.yml` (create the file at the root of your module if it
-doesn't exist yet):
-
-```yaml
----
-Gemfile:
-  required:
-    ':system_tests':
-      - gem: 'puppet-module-posix-system-r#{minor_version}'
-        platforms: ruby
-      - gem: beaker
-        version: '~> 3.13'
-        from_env: BEAKER_VERSION
-      - gem: beaker-rspec
-        from_env: BEAKER_RSPEC_VERSION
-```
-
-Then run `pdk update` to include the new stuff in your `Gemfile`.
-
-You can then run the tests with `pdk bundle exec ...` instead of `bundle exec
-...`. That'll install the gems for you as needed.
+More information on [my Beaker-RSpec page](testing-beaker-rspec.md).
 
 ### Beaker
 
