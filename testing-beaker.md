@@ -27,9 +27,9 @@ Puppetlabs's infrastructure. Beyond that, stuff tends to break.
 
 ### Introductory / concepts
 
-[Quickstart] to generate sample files to work with and run a first test
-(install Puppet and try to run it). Remember that, if you are using PDK, you
-should include the Rakefile change in your `.sync.yml` instead:
+You can use the [Quickstart] to generate sample files to work with and run a
+first test (install Puppet and try to run it). Remember that, if you are using
+PDK, you should include the Rakefile change in your `.sync.yml` instead:
 
 ```yaml
 ---
@@ -113,6 +113,16 @@ Gemfile:
         from_env: BEAKER_VAGRANT_VERSION
 ```
 
+Adapt the versions above as needed.
+
+The `from_env` let you use these environment variables to specify an exact
+version, or more importantly your own version of the gem should have to patch
+it (ahem):
+
+```sh
+export BEAKER_VERSION=file:///path/to/my/beaker/gem
+```
+
 Then get a working Bundler environment with:
 
 ```
@@ -178,7 +188,7 @@ You can run:
 ```
 bundle exec beaker init -h acceptance/config/default.yaml -o acceptance/.beaker-everything.cfg --any-other-option
 bundle exec beaker provision
-bundle exec beaker exec setup,tests
+bundle exec beaker exec pre-suite,tests
 # Fix your tests here
 bundle exec beaker exec tests
 # More iterations
@@ -208,13 +218,13 @@ Beaker can configure the proxy, so it's still not as fast as it could be.
 If you recall from the Quickstart in the official documentation, the setup
 suite is where you get all the prerequisites installed on the SUTs.
 
-### Installing Puppet 5
+### Installing Puppet 6
 
 Getting the latest version of Puppet installed on the SUT is easy, but
 non-obvious:
 
 ```ruby
-install_puppet_agent_on(hosts, puppet_collection: 'puppet5')
+install_puppet_agent_on(hosts, puppet_collection: 'puppet6')
 ```
 
 ### Installing your module on the SUT
@@ -282,7 +292,3 @@ end
 
 [teardown blocks]: https://github.com/puppetlabs/beaker/blob/master/docs/concepts/style_guide.md#teardowns
 
-### Calling Beaker-RSpec
-
-Getting the best of both worlds would be super convenient, but I have no idea
-how, so far :)
