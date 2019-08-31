@@ -17,7 +17,7 @@ at once.
 
 ## My setup
 
-Linux, PDK 1.6.1, Vagrant, VirtualBox.
+Linux, PDK 1.12.0, Vagrant, VirtualBox.
 
 As standard as it gets, except that the real standard is running tests on
 Puppetlabs's infrastructure. Beyond that, stuff tends to break.
@@ -89,6 +89,75 @@ acceptance/setup/   # Your pre-test suites go here (*.rb)
 acceptance/tests/   # And the actual tests here (*.rb)
 ```
 
+## Basic Usage
+
+Beaker can be made to work through PDK (`pdk bundle exec`), but this is mostly
+self-inflicted pain. I've updated the instructions below to use Bundler
+instead.
+
+### Required Gems
+
+Your `.sync.yml` (for PDK) should include the following:
+
+```yaml
+Gemfile:
+  required:
+    ':system_tests':
+      - gem: beaker
+        version: '~> 4.8'
+        from_env: BEAKER_VERSION
+      - gem: beaker-module_install_helper
+      - gem: beaker-puppet
+      - gem: beaker-vagrant
+        version: '~> 0.6'
+        from_env: BEAKER_VAGRANT_VERSION
+```
+
+Then get a working Bundler environment with:
+
+```
+bundle install --path vendor/ --with system_tests --jobs 4`
+```
+
+It is important to use `vendor` instead of `.vendor`, as PDK ignores the former
+but not the later, and would otherwise report lots of YAML errors in files that
+don't belong to you.
+
+Adjust `--jobs` to your number of CPU cores.
+
+### Option Files and Rake
+
+This avoids having to copy-paste standard arguments over and over.
+
+Assuming we're going to create a "run everything" test suite, start by creating
+a Beaker option file as `acceptance/.beaker-everything.cfg`:
+
+```ruby
+{
+  :pre_suite       => ['./acceptance/setup'],
+  :hosts_file      => './acceptance/config/default.yaml',
+  :log_level       => 'debug',
+  :tests           => ['./acceptance/tests'],
+  :timeout         => 6000
+}
+```
+
+If you also add the Beaker/Rake integration (here in PDK `.sync.yml` format):
+
+```yaml
+Rakefile:
+  requires:
+    - require: beaker/tasks/test
+      conditional: "Bundler.rubygems.find_name('beaker').any?"
+```
+
+Then you can invoke your "everything" acceptance test suite with `bundler exec
+rake 'beaker:test[,everything]'`, or as `bundler exec beaker --options-file
+./acceptance/.beaker-everything.cfg`.
+
+The second form lets you pass extra Beaker arguments on the command line, but
+anything that you use every time should go in the `.cfg`.
+
 
 ## How to speed up testing
 
@@ -97,59 +166,23 @@ to spit out the next error message (if you actually made progress, that is ;).
 
 We need to fail faster.
 
-### How to see real-time output
-
-`pdk bundle exec ...` buffers the output, e.g. you won't see the result of your
-test until it's finished. It's a
-[known limitation](https://github.com/puppetlabs/pdk/issues/364).
-
-My trivial workaround: I created a script (I'll call it `pbe`) that just calls
-`bundle` with the right environment variables set:
-
-```bash
-#!/bin/sh
-
-PUPPET_GEM_VERSION=5.5.3 BUNDLE_IGNORE_CONFIG=1 GEM_HOME=... GEM_PATH=... PATH=... \
-    /opt/puppetlabs/pdk/private/ruby/2.4.4/bin/bundle exec "$@"
-```
-
-You can get the values for these environment variables by running `pdk --debug
-bundle exec`.
-
-NB: you'll need to run `pdk bundle exec` at least once to install any new gem
-referenced in the `Gemfile`.
-
 ### How to retest without recreating the VM
 
-The official way: use
-[subcommands](https://github.com/puppetlabs/beaker/blob/master/docs/tutorials/subcommands.md).
+The official way,
+[subcommands](https://github.com/puppetlabs/beaker/blob/master/docs/tutorials/subcommands.md),
+now works for Vagrant too with `beaker-vagrant >= 0.6` and a couple of patches
+to the `beaker` and `beaker-vagrant` gems!
 
-Of course, it [doesn't
-work](https://tickets.puppetlabs.com/projects/BKR/issues/BKR-1469) anymore with
-Vagrant.
-
-My workaround: if you specify `--preserve-hosts=always`, the SUTs won't be
-destroyed and you'll even get the exact command line to run to retest under the
-`You can re-run commands against` line. It assumes that you have
-the environment variables set, so I just use my `pbe` script.
-
-But wait! Of course it can't be that easy, there is one more Vagrant-related
-bug. You'll get:
+You can run:
 
 ```
-#<RuntimeError: Beaker is configured with provision = false but no vagrant file
-was found at
-...module.../.vagrant/beaker_vagrant_files/hosts_preserved.yml/Vagrantfile.
-You need to enable provision>
-```
-
-The Vagrantfile is actually in a directory called `default.yaml`, after the
-name of the hosts definition file (so adapt this as needed). I didn't bother to
-google this one up and just created a symlink:
-
-```bash
-cd .vagrant/beaker_vagrant_files
-ln -s default.yaml hosts_preserved.yml
+bundle exec beaker init -h acceptance/config/default.yaml -o acceptance/.beaker-everything.cfg --any-other-option
+bundle exec beaker provision
+bundle exec beaker exec setup,tests
+# Fix your tests here
+bundle exec beaker exec tests
+# More iterations
+bundle exec detroy
 ```
 
 ### How to use a proxy
